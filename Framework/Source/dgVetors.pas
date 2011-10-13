@@ -1,4 +1,4 @@
-unit Vetor;
+unit dgVetors;
 
 interface
 

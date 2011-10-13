@@ -1,4 +1,4 @@
-unit uScreenForm;
+unit uGameForm;
 
 interface
 
@@ -6,35 +6,36 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls;
 
-
 type
   TfrmCGScreen = class(TForm)
-    pbxScreen: TPaintBox;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
-    fScreenBuff : TBitmap;
+    fScreenBuff   : TBitmap;
     fDrawingScene : boolean;
-    fFullScreen : boolean;
+    fFullScreen   : boolean;
     fOrigResX, fOrigResY : integer;
 
     fTextH : integer;
 
-    fLastFPS : real;
+    fFramesRendered     : integer;
+    fFramesInLastSecond : integer;
+    fLastSecondBegining : real;
+
+    fLastFrame : real;
     fShowFPS : boolean;
-    fShowResolition : boolean;
-    fBeginTime, fEndTime, fFrequency : Int64;
+    fShowResolution : boolean;
+    fFrameBeginTime, fFrameEndTime, fFrequency : Int64;
     fDeltaTime : real;
-    function CalcFPS: real;
 
     procedure WMEraseBg(var Msg: TWMEraseBkgnd); message WM_ERASEBKGND;
     procedure SetResolution(pWidth, pHeight : integer);
     procedure OnIdle(Sender: TObject; var Done: Boolean);
     procedure InitObjects;
     procedure DisposeObjects;
-    procedure ClearBuff;
+    procedure ClearBuffer;
     procedure StartScene;
     procedure EndScene;
     procedure MainLoop;
@@ -51,11 +52,11 @@ type
     procedure HideCursor;
     procedure DrawScene; virtual;
     procedure ProcessInput; virtual;
-    property Buffer : TBitmap read fScreenBuff;
+    property  Buffer : TBitmap read fScreenBuff;
   published
-    property FPS : real read CalcFPS;
+    property FPS : integer read fFramesInLastSecond;
     property ShowFPS : boolean read fShowFPS write fShowFPS;
-    property ShowResolition : boolean read fShowResolition write fShowResolition;
+    property ShowResolition : boolean read fShowResolution write fShowResolution;
     property FullScreen : boolean read fFullScreen write SetFullScreen;
   end;
 
@@ -68,22 +69,7 @@ implementation
 
 { TForm1 }
 
-
-procedure TfrmCGScreen.Blit;
-begin
-  if not(fDrawingScene)  then
-    BitBlt(pbxScreen.Canvas.Handle, 0, 0, Self.Width, Self.Height,
-           fScreenBuff.Canvas.Handle, 0, 0, cmSrcCopy);
-end;
-
-function TfrmCGScreen.CalcFPS: real;
-begin
-  if fDeltaTime > 0 then
-     fLastFPS := 1000/fDeltaTime;
-  Result := fLastFPS;
-end;
-
-procedure TfrmCGScreen.ClearBuff;
+procedure TfrmCGScreen.ClearBuffer;
 begin
   fScreenBuff.Canvas.Brush.Color := Color;
   fScreenBuff.Canvas.Brush.Style := bsSolid;
@@ -99,7 +85,7 @@ procedure TfrmCGScreen.DrawTextFPS;
 begin
   fScreenBuff.Canvas.Font.Assign(Self.Font);
   fScreenBuff.Canvas.Brush.Style := bsClear;
-  fScreenBuff.Canvas.TextOut(0, 0, FormatFloat('FPS 00.0', FPS));
+  fScreenBuff.Canvas.TextOut(0, 0, FormatFloat('FPS: #,000', fFramesInLastSecond));
 end;
 
 procedure TfrmCGScreen.DrawScene;
@@ -128,14 +114,7 @@ procedure TfrmCGScreen.DrawTextResolution;
 begin
   fScreenBuff.Canvas.Font.Assign(Self.Font);
   fScreenBuff.Canvas.Brush.Style := bsClear;
-  fScreenBuff.Canvas.TextOut(85, 0, IntToStr(ClientWidth) + ' X ' + IntToStr(ClientHeight));
-end;
-
-procedure TfrmCGScreen.EndScene;
-begin
-  fDrawingScene := false;
-  fDeltaTime := ((fBeginTime - fEndTime)*1000) / fFrequency;
-  QueryPerformanceCounter(fEndTime);
+  fScreenBuff.Canvas.TextOut(0, fScreenBuff.Canvas.TextHeight(' ') * 1, 'Resolução: ' + IntToStr(ClientWidth) + ' X ' + IntToStr(ClientHeight));
 end;
 
 
@@ -183,23 +162,23 @@ procedure TfrmCGScreen.InitObjects;
 begin
   fScreenBuff := TBitmap.Create;
   fShowFPS := true;
-  fShowResolition := true;
+  fShowResolution := true;
   fDrawingScene := true;
   fTextH := fScreenBuff.Canvas.TextHeight('T');
 
   HideCursor;
-  QueryPerformanceCounter(fBeginTime);
-  fEndTime := fBeginTime;
+  QueryPerformanceCounter(fFrameBeginTime);
+  fFrameEndTime := fFrameBeginTime;
+  fLastSecondBegining := fFrameBeginTime;
+  fFramesInLastSecond := 0;
 end;
 
 procedure TfrmCGScreen.MainLoop;
 begin
   StartScene;
   DrawScene;
-  if fShowFPS then
-     DrawTextFPS;
-  if fShowResolition then
-     DrawTextResolution;
+  if fShowFPS then DrawTextFPS;
+  if fShowResolution then DrawTextResolution;
   ProcessInput;
   EndScene;
 end;
@@ -295,10 +274,32 @@ end;
 
 procedure TfrmCGScreen.StartScene;
 begin
-  QueryPerformanceCounter(fBeginTime);
-  ClearBuff;
+  QueryPerformanceCounter(fFrameBeginTime);
+  ClearBuffer;
   fDrawingScene := True;
 end;
+
+procedure TfrmCGScreen.EndScene;
+begin
+  fDrawingScene := false;
+  fDeltaTime := ( (fFrameBeginTime - fFrameEndTime) * 1000) / fFrequency;
+  QueryPerformanceCounter(fFrameEndTime);
+
+  if ( (fFrameEndTime - fLastSecondBegining ) * 1000 / fFrequency ) > 1000 then
+  begin
+    fLastSecondBegining := fFrameEndTime;
+    fFramesInLastSecond := fFramesRendered;
+    fFramesRendered := 0;
+  end;
+end;
+
+procedure TfrmCGScreen.Blit;
+begin
+  if not fDrawingScene then
+    BitBlt(Canvas.Handle, 0, 0, Self.Width, Self.Height, fScreenBuff.Canvas.Handle, 0, 0, cmSrcCopy);
+  inc(fFramesRendered);
+end;
+
 
 procedure TfrmCGScreen.WMEraseBg(var Msg: TWMEraseBkgnd);
 begin
