@@ -19,8 +19,8 @@ type
     procedure ProcessInput;         //2.1
     procedure UpdateAnimation;      //2.2
     procedure DrawToBuffer;         //2.3
-    procedure Blit;                 //2.4
-
+    procedure Blit;
+    procedure FreeFields;                 //2.4
   public
     { Public declarations }
     Sprite : TSprite;
@@ -75,11 +75,16 @@ begin
          fOffScreen.Canvas.Handle, 0, 0, SRCCOPY);
 end;
 
-
-procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TForm1.FreeFields;
 begin
   fOffScreen.Free;
   Sprite.Free;
+end;
+
+
+procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  FreeFields;
 end;
 
 
@@ -103,9 +108,19 @@ begin
   fOffScreen.Canvas.Font.Size  := 9;
 
   Sprite := TSprite.Create;
-  Sprite.LoadFromFile('img01.bmp');
-  Sprite.Opacity := 1;
+  if FileExists('img01.bmp') then
+     Sprite.LoadFromFile('img01.bmp')
+  else
+  if FileExists('..\res\img01.bmp') then
+     Sprite.LoadFromFile('..\res\img01.bmp')
+  else
+    begin
+      ShowMessage('Não foi possível encontrar a imagem img01.bmp.'#13#10'O programa não pode continuar');
+      FreeFields;
+      Halt(1);
+    end;
 
+  Sprite.Opacity := 1;
   Application.OnIdle := OnIdle;
 end;
 
@@ -135,6 +150,7 @@ end;
 
 procedure TForm1.ProcessInput;
 begin
+
 end;
 
 
