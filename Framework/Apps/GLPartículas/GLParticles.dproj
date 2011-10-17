@@ -1,9 +1,9 @@
 ﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		<PropertyGroup>
-			<ProjectGuid>{20DC7F5E-90E1-4D38-844C-0A464DDEEFE6}</ProjectGuid>
+			<ProjectGuid>{E3628A23-FE44-49C0-9C93-8D5C84A31962}</ProjectGuid>
 			<ProjectVersion>13.4</ProjectVersion>
 			<FrameworkType>VCL</FrameworkType>
-			<MainSource>Particulas.dpr</MainSource>
+			<MainSource>GLParticles.dpr</MainSource>
 			<Base>True</Base>
 			<Config Condition="'$(Config)'==''">Debug</Config>
 			<Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -70,6 +70,9 @@
 			<DCC_RemoteDebug>true</DCC_RemoteDebug>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+			<Icon_MainIcon>c:\program files\embarcadero\rad studio\9.0\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
+			<VerInfo_Locale>1033</VerInfo_Locale>
 			<DCC_RemoteDebug>false</DCC_RemoteDebug>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -82,15 +85,21 @@
 			<DelphiCompile Include="$(MainSource)">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
-			<DCCReference Include="..\..\Source\Templates\uGameForm.pas">
-				<Form>frmCGScreen</Form>
+			<DCCReference Include="..\..\Source\Templates\uGLGameForm.pas">
+				<Form>frmGL2DTemplate</Form>
 			</DCCReference>
-			<DCCReference Include="uMain.pas">
+			<DCCReference Include="main.pas">
 				<Form>frmMain</Form>
 				<FormType>dfm</FormType>
 			</DCCReference>
-			<DCCReference Include="..\..\Source\dgParticles.pas"/>
 			<DCCReference Include="..\..\Source\dgCommonTypes.pas"/>
+			<DCCReference Include="..\..\Source\dgParticles.pas">
+				<Form>$R *.res</Form>
+			</DCCReference>
+			<DCCReference Include="dlgEmitterEditor.pas">
+				<Form>EmitterEditor</Form>
+				<FormType>dfm</FormType>
+			</DCCReference>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>
@@ -136,8 +145,12 @@
 						<VersionInfoKeys Name="Comments"/>
 					</VersionInfoKeys>
 					<Source>
-						<Source Name="MainSource">Particulas.dpr</Source>
+						<Source Name="MainSource">GLParticles.dpr</Source>
 					</Source>
+					<Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k160.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclofficexp160.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+					</Excluded_Packages>
 				</Delphi.Personality>
 				<Deployment/>
 				<Platforms>

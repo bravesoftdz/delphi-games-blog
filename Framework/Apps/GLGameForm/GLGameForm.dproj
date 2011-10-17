@@ -1,11 +1,11 @@
 ﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		<PropertyGroup>
-			<ProjectGuid>{20DC7F5E-90E1-4D38-844C-0A464DDEEFE6}</ProjectGuid>
+			<ProjectGuid>{AC0E658A-4BC6-4BC9-A740-9DC331691E3C}</ProjectGuid>
 			<ProjectVersion>13.4</ProjectVersion>
 			<FrameworkType>VCL</FrameworkType>
-			<MainSource>Particulas.dpr</MainSource>
+			<MainSource>GLGameForm.dpr</MainSource>
 			<Base>True</Base>
-			<Config Condition="'$(Config)'==''">Debug</Config>
+			<Config Condition="'$(Config)'==''">Release</Config>
 			<Platform Condition="'$(Platform)'==''">Win32</Platform>
 			<TargetedPlatforms>1</TargetedPlatforms>
 			<AppType>Application</AppType>
@@ -82,15 +82,10 @@
 			<DelphiCompile Include="$(MainSource)">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
-			<DCCReference Include="..\..\Source\Templates\uGameForm.pas">
-				<Form>frmCGScreen</Form>
-			</DCCReference>
-			<DCCReference Include="uMain.pas">
-				<Form>frmMain</Form>
+			<DCCReference Include="..\..\Source\Templates\uGLGameForm.pas">
+				<Form>frmGL2DTemplate</Form>
 				<FormType>dfm</FormType>
 			</DCCReference>
-			<DCCReference Include="..\..\Source\dgParticles.pas"/>
-			<DCCReference Include="..\..\Source\dgCommonTypes.pas"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>
@@ -136,7 +131,7 @@
 						<VersionInfoKeys Name="Comments"/>
 					</VersionInfoKeys>
 					<Source>
-						<Source Name="MainSource">Particulas.dpr</Source>
+						<Source Name="MainSource">GLGameForm.dpr</Source>
 					</Source>
 				</Delphi.Personality>
 				<Deployment/>

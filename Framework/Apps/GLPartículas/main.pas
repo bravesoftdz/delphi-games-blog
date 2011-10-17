@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs,
 
-  OpenGL,
+  dglOpenGL,
   dgCommonTypes,
   dgParticles,
   uGLGameForm,

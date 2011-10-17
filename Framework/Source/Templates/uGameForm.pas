@@ -24,7 +24,6 @@ type
     fFramesInLastSecond : integer;
     fLastSecondBegining : real;
 
-    fLastFrame : real;
     fShowFPS : boolean;
     fShowResolution : boolean;
     fFrameBeginTime, fFrameEndTime, fFrequency : Int64;
@@ -33,8 +32,6 @@ type
     procedure WMEraseBg(var Msg: TWMEraseBkgnd); message WM_ERASEBKGND;
     procedure SetResolution(pWidth, pHeight : integer);
     procedure OnIdle(Sender: TObject; var Done: Boolean);
-    procedure InitObjects;
-    procedure DisposeObjects;
     procedure ClearBuffer;
     procedure StartScene;
     procedure EndScene;
@@ -45,13 +42,16 @@ type
     procedure SetFullScreen(Value : boolean);
     procedure SaveVideoMode;
     procedure RestoreVideoMode;
+  protected
+    procedure InitObjects; virtual;
+    procedure FreeObjects; virtual;
+    procedure DrawScene; virtual;
+    procedure ProcessInput; virtual;
   public
     { Public declarations }
     procedure SetWindowSize(W, H: integer);
     procedure ShowCursor;
     procedure HideCursor;
-    procedure DrawScene; virtual;
-    procedure ProcessInput; virtual;
     property  Buffer : TBitmap read fScreenBuff;
   published
     property FPS : integer read fFramesInLastSecond;
@@ -76,7 +76,7 @@ begin
   fScreenBuff.Canvas.FillRect(ClientRect);
 end;
 
-procedure TfrmCGScreen.DisposeObjects;
+procedure TfrmCGScreen.FreeObjects;
 begin
   FreeAndNil(fScreenBuff);
 end;
@@ -120,7 +120,7 @@ end;
 
 procedure TfrmCGScreen.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  DisposeObjects;
+  FreeObjects;
   ShowCursor;
 end;
 
@@ -161,6 +161,7 @@ end;
 procedure TfrmCGScreen.InitObjects;
 begin
   fScreenBuff := TBitmap.Create;
+
   fShowFPS := true;
   fShowResolution := true;
   fDrawingScene := true;

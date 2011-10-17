@@ -4,8 +4,8 @@ interface
 
 uses
   dgCommonTypes,
-  Graphics,
-  OpenGL;
+  dglOpenGL,
+  Graphics;
 
 type
   TParticleEmitter = class;
@@ -24,10 +24,9 @@ type
     constructor Create;
   end;
 
-  PParticleNode = ^TParticleNode;
-  TParticleNode = record
+  TParticleNode = class
     Particle : TParticle;
-    Next     : PParticleNode;
+    Next     : TParticleNode;
   end;
 
 
@@ -38,7 +37,7 @@ type
       BOUNDARY_LINE_WIDTH = 1;
       CENTER_POINT_SIZE = 2;
     var
-      fParticleListNode : PParticleNode;
+      fParticleListNode : TParticleNode;
       fAngle     : single;
       fImpulse   : single;
       fWidth     : integer;
@@ -49,21 +48,23 @@ type
       fGravity   : T2DVector;
       fWind      : T2DVector;
       fVisibleBoundary : boolean;
+      fLifeTime : TRange;
   protected
+    procedure InitParticles;
     procedure DrawBoundaries;
-    procedure SetCount(Value: integer);
   public
-    constructor Create;
+    constructor Create(AParticleCount: integer = 100);
     destructor Destroy; override;
 
     procedure Draw;
 
-    property Center       : TPoint2D read fCenter write fCenter;
-    property Angle        : Single read fAngle write fAngle;
-    property Impulse      : Single read fImpulse write fImpulse;
+    property Center    : TPoint2D read fCenter write fCenter;
+    property Angle     : Single read fAngle write fAngle;
+    property Impulse   : Single read fImpulse write fImpulse;
+    property LifeTime  : TRange read fLifeTime write fLifeTime;
 
-    property Texture      : TBitmap read fTexture write fTexture;
-    property Count : integer read fCount write SetCount;
+    property Texture : TBitmap read fTexture write fTexture;
+    property Count : integer read fCount;
     property Width : integer read fWidth write fWidth;
     property Height: integer read fHeight write fHeight;
 
@@ -77,7 +78,7 @@ implementation
 
 { TParticleEmitter }
 
-constructor TParticleEmitter.Create;
+constructor TParticleEmitter.Create(AParticleCount: integer = 100);
 begin
   fParticleListNode := nil;
   fAngle     := 0;
@@ -85,9 +86,10 @@ begin
   fCenter    := TPoint2D.Create(200, 200);
   fWidth     := 300;
   fHeight    := 50;
-  fCount  := 100;
+  fCount     := AParticleCount;
   fGravity   := T2DVector.Create;
   fWind      := T2DVector.Create;
+  fLifeTime  := TRange.Create(1000, 10000);
   VisibleBoundary := true;
 end;
 
@@ -96,7 +98,7 @@ begin
   fCenter.Free;
   fGravity.Free;
   fWind.Free;
-
+  fLifeTime.Free;
 end;
 
 procedure TParticleEmitter.Draw;
@@ -107,7 +109,7 @@ begin
   if fVisibleBoundary then DrawBoundaries;
   while not(fParticleListNode = nil) do
   begin
-    lParticle := fParticleListNode^.Particle;
+    lParticle := fParticleListNode.Particle;
     if lParticle.Alive then
       begin
         HalfH  := lParticle.Size.Height / 2;
@@ -125,7 +127,7 @@ begin
            glVertex2f(lParticle.Position.X + HalfW, lParticle.Position.Y - HalfH);
         glEnd;
     end;
-    fParticleListNode := fParticleListNode^.Next;
+    fParticleListNode := fParticleListNode.Next;
   end;
 end;
 
@@ -185,16 +187,16 @@ begin
   glPopMatrix;
 end;
 
-procedure TParticleEmitter.SetCount(Value: integer);
+procedure TParticleEmitter.InitParticles;
 var
- i : integer;
+  i: Integer;
 begin
-  if Value <> fCount then
-  begin
-    if fCount = 0 then
-       for i:=0 to Value-1 do begin
+  Assert(fCount > 0);
 
-       end;
+  fParticleListNode := nil;
+  for i := 0 to Pred(fCount) do begin
+    fParticleListNode.Particle := TParticle.Create;
+
   end;
 end;
 

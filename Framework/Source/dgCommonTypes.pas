@@ -36,6 +36,12 @@ type
   end;
 
 
+  TRange = class
+    Min, Max: integer;
+    constructor Create(Min: integer = 1000; Max: integer = 10000);
+  end;
+
+
   T2DVector = class
     private
       fx, fy : single;
@@ -113,5 +119,13 @@ begin
   result := Sqr(fx*fx + fy*fy);
 end;
 
+
+{ TRange }
+
+constructor TRange.Create(Min: integer = 1000; Max: integer = 10000);
+begin
+  Self.Min := Min;
+  Self.Max := Max;
+end;
 
 end.

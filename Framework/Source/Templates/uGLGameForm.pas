@@ -3,37 +3,13 @@ unit uGLGameForm;
 interface
 
 uses
-  OpenGL,
+  dglOpenGL,
   dgCommonTypes,
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs;
 
 const
   XSize = 800;
   YSize = 600;
-  PFD: TPixelFormatDescriptor = (
-     nSize           : sizeof(TPixelFormatDescriptor);
-     nVersion        : 1;
-     dwFlags         : PFD_SUPPORT_OPENGL or PFD_DRAW_TO_WINDOW or PFD_DOUBLEBUFFER;
-     iPixelType      : PFD_TYPE_RGBA;
-     cColorBits      : 24;
-     cRedBits        : 0;   cRedShift   : 0;
-     cGreenBits      : 0;   cGreenShift : 0;
-     cBlueBits       : 0;   cBlueShift  : 0;
-     cAlphaBits      : 0;   cAlphaShift : 0;
-     cAccumBits      : 0;
-     cAccumRedBits   : 0;
-     cAccumGreenBits : 0;
-     cAccumBlueBits  : 0;
-     cAccumAlphaBits : 0;
-     cDepthBits      : 16;
-     cStencilBits    : 0;
-     cAuxBuffers     : 0;
-     iLayerType      : PFD_MAIN_PLANE;
-     bReserved       : 0;
-     dwLayerMask     : 0;
-     dwVisibleMask   : 0;
-     dwDamageMask    : 0; );
-
 
 type
   TfrmGL2DTemplate = class(TForm)
@@ -53,7 +29,8 @@ type
     fFrameEndTime : Int64;
     fFrequency : Int64;
 
-    procedure SetupPixelFormat(DC:HDC);
+    procedure InitializeOpenGL;
+    procedure FinalizeOpenGL;
 
     procedure EraseBg(var Msg:TWMEraseBkgnd); message WM_ERASEBKGND;
     procedure OnIdle(Sender: TObject; var Done: Boolean);
@@ -121,16 +98,16 @@ begin
   glBegin(GL_QUADS);
      // as primitivas são desenhadas no sentido anti-horário
      glColor3f(1,0,0);
-     glVertex(10, 10);
+     glVertex2i(10, 10);
 
      glColor3f(0,1,0);
-     glVertex(10, ClientHeight-10);
+     glVertex2i(10, ClientHeight-10);
 
      glColor3f(0,0,1);
-     glVertex(ClientWidth-10, ClientHeight-10);
+     glVertex2i(ClientWidth-10, ClientHeight-10);
 
      glColor3f(1,1,1);
-     glVertex(ClientWidth-10, 10);
+     glVertex2i(ClientWidth-10, 10);
   glEnd;
 end;
 
@@ -157,27 +134,31 @@ begin
   Msg.Result := 0;
 end;
 
+procedure TfrmGL2DTemplate.FinalizeOpenGL;
+begin
+  DeactivateRenderingContext;
+  wglDeleteContext(fGLRenderingContext);
+  ReleaseDC(fDeviceContext, fGLRenderingContext);
+end;
+
 procedure TfrmGL2DTemplate.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  Application.OnIdle := nil;
+  FinalizeOpenGL;
   FreeObjects;
 end;
 
 procedure TfrmGL2DTemplate.FormCreate(Sender: TObject);
 begin
-//ajustando a janela
+  //ajustando a janela
   BorderStyle := bsSingle;
   BorderIcons := [biSystemMenu];
   ClientWidth := XSize;
   ClientHeight := YSize;
   Position := poDesktopCenter;
 
-  //ajustando os contextos para o OpenGL
-  fDeviceContext := GetDC(Handle);
-  SetupPixelFormat(GetDC(Handle));
-  fGLRenderingContext := wglCreateContext(fDeviceContext);
-  wglMakeCurrent(fDeviceContext, fGLRenderingContext);
 
-  //inicializnado OpenGL
+  InitializeOpenGL;
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity;
   glOrtho(0, ClientWidth, ClientHeight, 0, 0, 1);
@@ -215,6 +196,14 @@ begin
 
 end;
 
+procedure TfrmGL2DTemplate.InitializeOpenGL;
+begin
+  dglOpenGL.InitOpenGL;
+  fDeviceContext := GetDC(Handle);
+  fGLRenderingContext := CreateRenderingContext(fDeviceContext, [opDoubleBuffered], 21,0,0,0,0,1);
+  dglOpenGL.ActivateRenderingContext(fDeviceContext, fGLRenderingContext);
+end;
+
 procedure TfrmGL2DTemplate.InitObjects;
 begin
 
@@ -231,15 +220,6 @@ procedure TfrmGL2DTemplate.OnIdle(Sender: TObject; var Done: Boolean);
 begin
   SceneLoop;
   done := false;
-end;
-
-procedure TfrmGL2DTemplate.SetupPixelFormat(DC: HDC);
-var
-  pixelFormat:integer;
-begin
-   pixelFormat := ChoosePixelFormat(DC, @pfd);
-   if (pixelFormat = 0) then exit;
-   if (SetPixelFormat(DC, pixelFormat, @pfd) <> TRUE) then exit;
 end;
 
 procedure TfrmGL2DTemplate.StartScene;
