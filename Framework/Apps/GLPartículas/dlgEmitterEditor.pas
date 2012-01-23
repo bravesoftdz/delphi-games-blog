@@ -7,7 +7,7 @@ uses
 
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls,
-  Vcl.Samples.Spin;
+  Vcl.Samples.Spin, Vcl.ExtCtrls, Vcl.ExtDlgs;
 
 type
   TEmitterEditor = class(TForm)
@@ -28,6 +28,10 @@ type
     Label6: TLabel;
     spnImpulse: TSpinEdit;
     CheckBox1: TCheckBox;
+    Panel1: TPanel;
+    Label7: TLabel;
+    imgTexture: TImage;
+    OpenPictureDialog: TOpenPictureDialog;
     procedure ckbVisibleBoundariesClick(Sender: TObject);
     procedure spnWidthChange(Sender: TObject);
     procedure spnHeigthChange(Sender: TObject);
@@ -35,6 +39,7 @@ type
     procedure trkAngleZChange(Sender: TObject);
     procedure spnImpulseChange(Sender: TObject);
     procedure spnYChange(Sender: TObject);
+    procedure imgTextureClick(Sender: TObject);
   private
     fEmitter: TParticleEmitter;
   public
@@ -45,6 +50,8 @@ type
 implementation
 
 {$R *.dfm}
+
+uses dgTextures;
 
 { TEmitterEditor }
 
@@ -66,6 +73,23 @@ begin
     spnHeigth.Value := fEmitter.Height;
     spnImpulse.Value := Round(fEmitter.Impulse);
     trkAngleZ.Position := Round(fEmitter.Angle);
+  end;
+end;
+
+procedure TEmitterEditor.imgTextureClick(Sender: TObject);
+var
+  textureID : cardinal;
+begin
+  if OpenPictureDialog.Execute then
+  begin
+    dgTextures.LoadTexture(OpenPictureDialog.FileName, textureID, false);
+    fEmitter.Texture := textureID;
+    if fEmitter.Texture > 0 then
+    begin
+       imgTexture.Picture.LoadFromFile(OpenPictureDialog.FileName);
+       imgTexture.Stretch := (imgTexture.Picture.Height > imgTexture.Height) or (imgTexture.Picture.Width > imgTexture.Width);
+       imgTexture.Center := not imgTexture.Stretch;
+    end;
   end;
 end;
 

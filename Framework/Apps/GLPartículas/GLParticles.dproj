@@ -100,6 +100,7 @@
 				<Form>EmitterEditor</Form>
 				<FormType>dfm</FormType>
 			</DCCReference>
+			<DCCReference Include="..\..\Source\dgTextures.pas"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>

@@ -4,8 +4,8 @@ object EmitterEditor: TEmitterEditor
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSizeToolWin
   Caption = 'Properties'
-  ClientHeight = 191
-  ClientWidth = 262
+  ClientHeight = 293
+  ClientWidth = 259
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,16 +19,14 @@ object EmitterEditor: TEmitterEditor
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 262
-    Height = 191
+    Width = 259
+    Height = 293
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 206
     object TabSheet1: TTabSheet
       BorderWidth = 3
       Caption = 'Emitter'
-      ExplicitHeight = 178
       object Label3: TLabel
         Left = 14
         Top = 35
@@ -81,6 +79,13 @@ object EmitterEditor: TEmitterEditor
         AutoSize = False
         Caption = 'Impulse'
         FocusControl = spnImpulse
+      end
+      object Label7: TLabel
+        Left = 6
+        Top = 157
+        Width = 34
+        Height = 13
+        Caption = 'Texure'
       end
       object spnWidth: TSpinEdit
         Left = 48
@@ -170,11 +175,36 @@ object EmitterEditor: TEmitterEditor
         TabOrder = 7
         OnClick = ckbVisibleBoundariesClick
       end
+      object Panel1: TPanel
+        Left = 48
+        Top = 157
+        Width = 194
+        Height = 99
+        BevelKind = bkSoft
+        BevelOuter = bvNone
+        Caption = 'Click to set the texture'
+        TabOrder = 8
+        object imgTexture: TImage
+          Left = 0
+          Top = 0
+          Width = 190
+          Height = 95
+          Cursor = crHandPoint
+          Align = alClient
+          OnClick = imgTextureClick
+          ExplicitLeft = 48
+          ExplicitWidth = 105
+          ExplicitHeight = 105
+        end
+      end
     end
     object TabSheet2: TTabSheet
       Caption = 'Particles'
       ImageIndex = 1
-      ExplicitHeight = 178
     end
+  end
+  object OpenPictureDialog: TOpenPictureDialog
+    Left = 8
+    Top = 256
   end
 end

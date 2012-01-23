@@ -4,13 +4,14 @@ interface
 
 uses
   dgParticles,
+  uGLGameForm,
 
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, uGameForm;
 
 
 type
-  TfrmMain = class(TfrmCGScreen)
+  TfrmMain = class(TfrmGL2DTemplate)
   private
     { Private declarations }
   protected
@@ -33,7 +34,7 @@ implementation
 
 procedure TfrmMain.DrawScene;
 begin
-  Emiter.Draw(Canvas);
+  Emiter.Draw;
 end;
 
 procedure TfrmMain.FreeObjects;

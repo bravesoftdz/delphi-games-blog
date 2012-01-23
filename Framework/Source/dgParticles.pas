@@ -4,8 +4,7 @@ interface
 
 uses
   dgCommonTypes,
-  dglOpenGL,
-  Graphics;
+  dglOpenGL;
 
 type
   TParticleEmitter = class;
@@ -22,11 +21,7 @@ type
     LastDie    : Cardinal;
     LifeTime   : Cardinal;
     constructor Create;
-  end;
-
-  TParticleNode = class
-    Particle : TParticle;
-    Next     : TParticleNode;
+    destructor Destroy; override;
   end;
 
 
@@ -37,13 +32,13 @@ type
       BOUNDARY_LINE_WIDTH = 1;
       CENTER_POINT_SIZE = 2;
     var
-      fParticleListNode : TParticleNode;
+      fParticles : array of TParticle;
       fAngle     : single;
       fImpulse   : single;
       fWidth     : integer;
       fHeight    : integer;
       fCenter    : TPoint2D;
-      fTexture   : TBitmap;
+      fTexture   : cardinal;
       fCount     : integer;
       fGravity   : T2DVector;
       fWind      : T2DVector;
@@ -51,6 +46,7 @@ type
       fLifeTime : TRange;
   protected
     procedure InitParticles;
+    procedure DestroyParticles;
     procedure DrawBoundaries;
   public
     constructor Create(AParticleCount: integer = 100);
@@ -63,7 +59,7 @@ type
     property Impulse   : Single read fImpulse write fImpulse;
     property LifeTime  : TRange read fLifeTime write fLifeTime;
 
-    property Texture : TBitmap read fTexture write fTexture;
+    property Texture : cardinal read fTexture write fTexture;
     property Count : integer read fCount;
     property Width : integer read fWidth write fWidth;
     property Height: integer read fHeight write fHeight;
@@ -80,7 +76,7 @@ implementation
 
 constructor TParticleEmitter.Create(AParticleCount: integer = 100);
 begin
-  fParticleListNode := nil;
+  SetLength(fParticles, 0);
   fAngle     := 0;
   fImpulse   := 10;
   fCenter    := TPoint2D.Create(200, 200);
@@ -91,6 +87,9 @@ begin
   fWind      := T2DVector.Create;
   fLifeTime  := TRange.Create(1000, 10000);
   VisibleBoundary := true;
+  fTexture   := 0;
+
+  InitParticles;
 end;
 
 destructor TParticleEmitter.Destroy;
@@ -99,36 +98,52 @@ begin
   fGravity.Free;
   fWind.Free;
   fLifeTime.Free;
+  DestroyParticles;
 end;
 
 procedure TParticleEmitter.Draw;
 var
   lParticle : TParticle;
   HalfH, HalfW : single;
+  i : integer;
 begin
   if fVisibleBoundary then DrawBoundaries;
-  while not(fParticleListNode = nil) do
+
+  for i:=0 to Pred(Length(fParticles)) do
   begin
-    lParticle := fParticleListNode.Particle;
-    if lParticle.Alive then
+    lParticle := fParticles[i];
+//    if lParticle.Alive then
       begin
         HalfH  := lParticle.Size.Height / 2;
         HalfW  := lParticle.Size.Width / 2;
         glColor3f(0,0,1);
+        glLoadIdentity;
+        glNormal3f(0, 0, 1);
+        {
+        glEnable(GL_TEXTURE_2D);
+        if fTexture > 0 then glBindTexture(GL_TEXTURE_2D, fTexture);
         glBegin(GL_QUADS);
-           glLoadIdentity;
            glTranslatef(lParticle.Position.X, lParticle.Position.Y, 0);
            glRotatef(lParticle.Angle, 0, 0, 1);
            glTranslatef(-lParticle.Position.X, -lParticle.Position.Y, 0);
 
+           glTexCoord2f(0,0);
            glVertex2f(lParticle.Position.X - HalfW, lParticle.Position.Y - HalfH);
+
+           glTexCoord2f(1,0);
            glVertex2f(lParticle.Position.X - HalfW, lParticle.Position.Y + HalfH);
+
+           glTexCoord2f(1,1);
            glVertex2f(lParticle.Position.X + HalfW, lParticle.Position.Y + HalfH);
+
+           glTexCoord2f(0,1);
            glVertex2f(lParticle.Position.X + HalfW, lParticle.Position.Y - HalfH);
         glEnd;
+        glDisable(GL_TEXTURE_2D);
+        }
     end;
-    fParticleListNode := fParticleListNode.Next;
   end;
+
 end;
 
 procedure TParticleEmitter.DrawBoundaries;
@@ -147,12 +162,31 @@ begin
   glRotatef(fAngle, 0, 0, 1);
   glTranslatef(-fCenter.X, -fCenter.Y, 0);
 
-  glBegin(GL_LINE_LOOP); {Boudaries}
-    glVertex3f((fCenter.X - HalfW), (fCenter.Y - HalfH), 0);
-    glVertex3f((fCenter.X - HalfW), (fCenter.Y + HalfH), 0);
-    glVertex3f((fCenter.X + HalfW), (fCenter.Y + HalfH), 0);
-    glVertex3f((fCenter.X + HalfW), (fCenter.Y - HalfH), 0);
-  glEnd;
+  {Boudaries}
+  if fTexture > 0 then begin
+     glEnable(GL_TEXTURE_2D);
+     glBindTexture(GL_TEXTURE_2D, fTexture);
+     glBegin(GL_QUADS);
+//      glTexCoord2f(0, 0); glVertex3f((fCenter.X - HalfW), (fCenter.Y - HalfH), 0);
+//      glTexCoord2f(1, 0); glVertex3f((fCenter.X - HalfW), (fCenter.Y + HalfH), 0);
+//      glTexCoord2f(1, 1); glVertex3f((fCenter.X + HalfW), (fCenter.Y + HalfH), 0);
+//      glTexCoord2f(0, 1); glVertex3f((fCenter.X + HalfW), (fCenter.Y - HalfH), 0);
+
+      glTexCoord2f(0, 0); glVertex3f((fCenter.X + HalfW), (fCenter.Y - HalfH), 0);
+      glTexCoord2f(1, 0); glVertex3f((fCenter.X + HalfW), (fCenter.Y + HalfH), 0);
+      glTexCoord2f(1, 1); glVertex3f((fCenter.X - HalfW), (fCenter.Y + HalfH), 0);
+      glTexCoord2f(0, 1); glVertex3f((fCenter.X - HalfW), (fCenter.Y - HalfH), 0);
+     glEnd;
+  end
+  else begin
+    glBegin(GL_LINE_LOOP);
+      glVertex3f((fCenter.X - HalfW), (fCenter.Y - HalfH), 0);
+      glVertex3f((fCenter.X - HalfW), (fCenter.Y + HalfH), 0);
+      glVertex3f((fCenter.X + HalfW), (fCenter.Y + HalfH), 0);
+      glVertex3f((fCenter.X + HalfW), (fCenter.Y - HalfH), 0);
+    glEnd;
+  end;
+
 
   glPointSize(CENTER_POINT_SIZE); {wmitter center indicator}
   glBegin(GL_POINTS);
@@ -187,17 +221,29 @@ begin
   glPopMatrix;
 end;
 
+procedure TParticleEmitter.DestroyParticles;
+var
+  i: integer;
+begin
+  for i:=0 to Pred(Length(fParticles)) do
+    fParticles[i].Free;
+  SetLength(fParticles, 0);
+end;
+
 procedure TParticleEmitter.InitParticles;
 var
   i: Integer;
 begin
   Assert(fCount > 0);
 
-  fParticleListNode := nil;
-  for i := 0 to Pred(fCount) do begin
-    fParticleListNode.Particle := TParticle.Create;
-
+  SetLength(fParticles, fCount);
+  for i:= 0 to Pred(fCount) do
+  begin
+    fParticles[i] := TParticle.Create;
+    fParticles[i].Position.X := fCenter.X;
+    fParticles[i].Position.Y := fCenter.Y;
   end;
+
 end;
 
 { TParticle }
@@ -207,6 +253,14 @@ begin
   Position   := T2DVector.Create;
   Size       := TSize.Create;
   Speed      := T2DVector.Create(0,1);
+end;
+
+destructor TParticle.Destroy;
+begin
+  Size.Free;
+  Speed.Free;
+  Position.Free;
+  inherited;
 end;
 
 end.

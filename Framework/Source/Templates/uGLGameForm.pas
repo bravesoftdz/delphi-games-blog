@@ -202,6 +202,10 @@ begin
   fDeviceContext := GetDC(Handle);
   fGLRenderingContext := CreateRenderingContext(fDeviceContext, [opDoubleBuffered], 21,0,0,0,0,1);
   dglOpenGL.ActivateRenderingContext(fDeviceContext, fGLRenderingContext);
+
+  glShadeModel(GL_SMOOTH);
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_TEXTURE_BINDING_2D);
 end;
 
 procedure TfrmGL2DTemplate.InitObjects;
