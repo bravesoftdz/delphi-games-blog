@@ -39,14 +39,17 @@ type
     procedure AdjustFormToFullScreen(pWidth, pHeight: integer);
     procedure SceneLoop;
   protected
-    procedure StartScene;
-    procedure EndScene;
+    procedure StartScene; virtual;
+    procedure EndScene; virtual;
     procedure DrawScene; virtual;
   public
     procedure InitObjects; virtual;
     procedure FreeObjects; virtual;
 
     property BGColor: TColor4f read fBGColor write fBGColor;
+
+    property DeltaTime: double read fDeltaTime;
+    property FrameBeginTime: Int64 read fFrameBeginTime;
   end;
 
 var
@@ -94,6 +97,10 @@ end;
 
 procedure TfrmGL2DTemplate.DrawScene;
 begin
+  glClearColor(fBGColor.Red, fBGColor.Green, fBGColor.Blue, fBGColor.Alpha);
+  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+  glLoadIdentity;
+
   glColor3i(1,0,0);
   glBegin(GL_QUADS);
      // as primitivas são desenhadas no sentido anti-horário
@@ -181,6 +188,7 @@ begin
 
   InitObjects;
 
+  Caption := 'FPS: Calculating...';
   Application.OnIdle := OnIdle;
 end;
 
@@ -200,7 +208,7 @@ procedure TfrmGL2DTemplate.InitializeOpenGL;
 begin
   dglOpenGL.InitOpenGL;
   fDeviceContext := GetDC(Handle);
-  fGLRenderingContext := CreateRenderingContext(fDeviceContext, [opDoubleBuffered], 21,0,0,0,0,1);
+  fGLRenderingContext := CreateRenderingContext(fDeviceContext, [opDoubleBuffered], 32, 0, 0, 0, 0, 1);
   dglOpenGL.ActivateRenderingContext(fDeviceContext, fGLRenderingContext);
 
   glShadeModel(GL_SMOOTH);
@@ -230,10 +238,6 @@ procedure TfrmGL2DTemplate.StartScene;
 begin
   QueryPerformanceCounter(fFrameBeginTime);
 
-  glClearColor(fBGColor.Red, fBGColor.Green, fBGColor.Blue, fBGColor.Alpha);
-
-  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
-  glLoadIdentity;
 end;
 
 end.

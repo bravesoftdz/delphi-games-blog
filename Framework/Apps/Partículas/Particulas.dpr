@@ -1,7 +1,7 @@
 program Particulas;
 
 uses
-  Vcl.Forms,
+  Forms,
   uGameForm in '..\..\Source\Templates\uGameForm.pas' {frmCGScreen},
   uMain in 'uMain.pas' {frmMain},
   dgParticles in '..\..\Source\dgParticles.pas',

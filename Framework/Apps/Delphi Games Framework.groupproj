@@ -12,6 +12,9 @@
 			<Projects Include="GLPartículas\GLParticles.dproj">
 				<Dependencies/>
 			</Projects>
+			<Projects Include="GLTextures 01\GLTextures01.dproj">
+				<Dependencies/>
+			</Projects>
 		</ItemGroup>
 		<ProjectExtensions>
 			<Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -47,14 +50,23 @@
 		<Target Name="GLParticles:Make">
 			<MSBuild Projects="GLPartículas\GLParticles.dproj" Targets="Make"/>
 		</Target>
+		<Target Name="GLTextures01">
+			<MSBuild Projects="GLTextures 01\GLTextures01.dproj"/>
+		</Target>
+		<Target Name="GLTextures01:Clean">
+			<MSBuild Projects="GLTextures 01\GLTextures01.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="GLTextures01:Make">
+			<MSBuild Projects="GLTextures 01\GLTextures01.dproj" Targets="Make"/>
+		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="GLGameForm;Particulas;GLParticles"/>
+			<CallTarget Targets="GLGameForm;Particulas;GLParticles;GLTextures01"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="GLGameForm:Clean;Particulas:Clean;GLParticles:Clean"/>
+			<CallTarget Targets="GLGameForm:Clean;Particulas:Clean;GLParticles:Clean;GLTextures01:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="GLGameForm:Make;Particulas:Make;GLParticles:Make"/>
+			<CallTarget Targets="GLGameForm:Make;Particulas:Make;GLParticles:Make;GLTextures01:Make"/>
 		</Target>
 		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
 	</Project>

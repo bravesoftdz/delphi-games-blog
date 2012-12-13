@@ -201,6 +201,10 @@ object EmitterEditor: TEmitterEditor
     object TabSheet2: TTabSheet
       Caption = 'Particles'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
   end
   object OpenPictureDialog: TOpenPictureDialog
