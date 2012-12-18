@@ -208,7 +208,7 @@ procedure TfrmGL2DTemplate.InitializeOpenGL;
 begin
   dglOpenGL.InitOpenGL;
   fDeviceContext := GetDC(Handle);
-  fGLRenderingContext := CreateRenderingContext(fDeviceContext, [opDoubleBuffered], 32, 0, 0, 0, 0, 1);
+  fGLRenderingContext := CreateRenderingContext(fDeviceContext, [opDoubleBuffered], 32, 16, 0, 0, 0, 1);
   dglOpenGL.ActivateRenderingContext(fDeviceContext, fGLRenderingContext);
 
   glShadeModel(GL_SMOOTH);

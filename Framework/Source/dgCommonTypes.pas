@@ -61,6 +61,19 @@ type
   end;
 
 
+  TVector3D = class
+  private
+    fX, fY, fZ : double;
+  public
+    constructor Create(const X: double = 0.0; const Y:double = 0.0; const Z:double = 0.0);
+    property X: double read fX write fX;
+    property Y: double read fY write fY;
+    property Z: double read fZ write fZ;
+  end;
+
+
+
+
 implementation
 
 { TPoint2D }
@@ -126,6 +139,15 @@ constructor TRange.Create(Min: integer = 1000; Max: integer = 10000);
 begin
   Self.Min := Min;
   Self.Max := Max;
+end;
+
+{ TVector3D }
+
+constructor TVector3D.Create(const X, Y, Z: double);
+begin
+  fX := X;
+  fY := Y;
+  fZ := Z;
 end;
 
 end.
