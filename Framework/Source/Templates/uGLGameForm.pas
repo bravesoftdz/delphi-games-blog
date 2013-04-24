@@ -5,6 +5,8 @@ interface
 uses
   dglOpenGL,
   dgCommonTypes,
+  dgCamera,
+  dgGlUtils,
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs;
 
 const
@@ -20,6 +22,7 @@ type
     fDeviceContext      : HDC;
     fGLRenderingContext : HGLRC;
     fBGColor            : TColor4f;
+    fActiveCamera       : TCamera;
 
     fDeltaTime : double;
     fFramesRendered     : integer;
@@ -30,6 +33,7 @@ type
     fFrequency : Int64;
 
     procedure InitializeOpenGL;
+    procedure InitializeCamera;
     procedure FinalizeOpenGL;
 
     procedure EraseBg(var Msg:TWMEraseBkgnd); message WM_ERASEBKGND;
@@ -41,8 +45,9 @@ type
   protected
     procedure StartScene; virtual;
     procedure EndScene; virtual;
-    procedure DrawScene; virtual;
   public
+    procedure DrawScene; virtual;
+
     procedure InitObjects; virtual;
     procedure FreeObjects; virtual;
 
@@ -50,6 +55,9 @@ type
 
     property DeltaTime: double read fDeltaTime;
     property FrameBeginTime: Int64 read fFrameBeginTime;
+
+    property ActiveCamera : TCamera read fActiveCamera write fActiveCamera;
+
   end;
 
 var
@@ -97,25 +105,30 @@ end;
 
 procedure TfrmGL2DTemplate.DrawScene;
 begin
+  glMatrixMode(GL_MODELVIEW);
   glClearColor(fBGColor.Red, fBGColor.Green, fBGColor.Blue, fBGColor.Alpha);
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
   glLoadIdentity;
 
+//  TGlUtils.SquarePlane( ClientHeight-10 );
+
+  {
   glColor3i(1,0,0);
   glBegin(GL_QUADS);
      // as primitivas são desenhadas no sentido anti-horário
-     glColor3f(1,0,0);
-     glVertex2i(10, 10);
-
-     glColor3f(0,1,0);
-     glVertex2i(10, ClientHeight-10);
-
-     glColor3f(0,0,1);
-     glVertex2i(ClientWidth-10, ClientHeight-10);
-
-     glColor3f(1,1,1);
-     glVertex2i(ClientWidth-10, 10);
+     glColor3f(1,0,0);  glVertex2i(10, 10);
+     glColor3f(0,1,0);  glVertex2i(10, ClientHeight-10);
+     glColor3f(0,0,1);  glVertex2i(ClientWidth-10, ClientHeight-10);
+     glColor3f(1,1,1);  glVertex2i(ClientWidth-10, 10);
   glEnd;
+  }
+
+  glPointSize(5);
+  glColor3i(1,1,1);
+  glBegin(GL_POINTS);
+    glVertex2i(0,0);
+  glEnd;
+
 end;
 
 procedure TfrmGL2DTemplate.EndScene;
@@ -164,16 +177,10 @@ begin
   ClientHeight := YSize;
   Position := poDesktopCenter;
 
+  InitObjects;
 
   InitializeOpenGL;
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity;
-  glOrtho(0, ClientWidth, ClientHeight, 0, 0, 1);
-
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_CULL_FACE);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity;
+  InitializeCamera;
 
   QueryPerformanceFrequency(fFrequency);
   QueryPerformanceCounter(fFrameBeginTime);
@@ -181,12 +188,10 @@ begin
   fLastSecondBegining := fFrameBeginTime;
   fFramesInLastSecond := 0;
 
-  fBGColor.Red   :=  0.3;
+  fBGColor.Red   := 0.3;
   fBGColor.Green := 0.3;
   fBGColor.Blue  := 0.3;
   fBGColor.Alpha := 0;
-
-  InitObjects;
 
   Caption := 'FPS: Calculating...';
   Application.OnIdle := OnIdle;
@@ -197,11 +202,33 @@ begin
   if ssAlt in Shift then
     if key = VK_RETURN then SetFullSreen;
 
+  case key of
+    VK_UP : begin
+                fActiveCamera.Zoom := fActiveCamera.Zoom + 0.01;
+                fActiveCamera.Update;
+              end;
+
+    VK_DOWN : begin
+                fActiveCamera.Zoom := fActiveCamera.Zoom - 0.01;
+                fActiveCamera.Update;
+              end;
+  end;
+
 end;
 
 procedure TfrmGL2DTemplate.FreeObjects;
 begin
+  FreeAndNil(fActiveCamera);
+end;
 
+procedure TfrmGL2DTemplate.InitializeCamera;
+begin
+  fActiveCamera.Kind := pkOrthogonal;
+  fActiveCamera.Position.SetValue(0, 0, 1);
+  fActiveCamera.Target.SetValue(0,0,0);
+  fActiveCamera.Params.ViewPort := Rect(0, 0, ClientWidth, ClientHeight);
+  fActiveCamera.Up.SetValue(0,1,0);
+  fActiveCamera.Update;
 end;
 
 procedure TfrmGL2DTemplate.InitializeOpenGL;
@@ -218,7 +245,7 @@ end;
 
 procedure TfrmGL2DTemplate.InitObjects;
 begin
-
+  fActiveCamera := TCamera.Create;
 end;
 
 procedure TfrmGL2DTemplate.SceneLoop;

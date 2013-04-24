@@ -61,16 +61,57 @@ type
   end;
 
 
-  TVector3D = class
-  private
-    fX, fY, fZ : double;
-  public
-    constructor Create(const X: double = 0.0; const Y:double = 0.0; const Z:double = 0.0);
-    property X: double read fX write fX;
-    property Y: double read fY write fY;
-    property Z: double read fZ write fZ;
+
+  TGlColor = record
+    R, G, B: GLfloat;
   end;
 
+
+  TGlCoord = record
+    X, Y, Z: GLfloat;
+    constructor Create(aX, aY, aZ: GLfloat);
+    procedure SetValue(aX, aY, aZ: GLfloat);
+    procedure IncX(aAmount: GLfloat);
+    procedure IncY(aAmount: GLfloat);
+    procedure IncZ(aAmount: GLfloat);
+  end;
+
+
+  TGlTextureCoord = record
+    U, V: GLfloat;
+  end;
+
+
+  TGlMaterial = record
+    Name      : string;
+    Ambient   : TGlColor;
+    Diffuse   : TGlColor;
+    Specular  : TGlColor;
+    Shininess : GlFloat;
+    Texture   : GlUint;
+  end;
+
+
+  TGlFace = record
+    Count : Integer;            // Number of vertices in faces
+    vIndex : Array of Integer;  // indexes to vertices
+    tIndex : Array of Integer;  // indexes to vertex textures
+    nIndex : Array of Integer;  // indexes to vertex normals
+  end;
+
+
+  TGlGroup = Record
+    Name : string;
+    Faces : integer;            // Number of faces
+    Face  : array of TGlFace;     // The faces in the group
+    mIndex : integer;           // index to Material
+  end;
+
+
+
+  IDrawable = interface
+    procedure Draw;
+  end;
 
 
 
@@ -141,13 +182,34 @@ begin
   Self.Max := Max;
 end;
 
-{ TVector3D }
 
-constructor TVector3D.Create(const X, Y, Z: double);
+{ TGlCoord }
+
+constructor TGlCoord.Create(aX, aY, aZ: GLfloat);
 begin
-  fX := X;
-  fY := Y;
-  fZ := Z;
+ SetValue(aX, aY, aZ);
+end;
+
+procedure TGlCoord.IncX(aAmount: GLfloat);
+begin
+  X := X + aAmount;
+end;
+
+procedure TGlCoord.IncY(aAmount: GLfloat);
+begin
+  Y := Y + aAmount;
+end;
+
+procedure TGlCoord.IncZ(aAmount: GLfloat);
+begin
+  Z := Z + aAmount;
+end;
+
+procedure TGlCoord.SetValue(aX, aY, aZ: GLfloat);
+begin
+  Self.X := aX;
+  Self.Y := aY;
+  Self.Z := aZ;
 end;
 
 end.
