@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2014/02/09 10:59:20.000.792,=C:\Users\Fabiano\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2014/02/09 11:56:31.351,=C:\Users\Fabiano\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2014/02/09 12:23:30.452,=D:\blog\trunk\Framework\Source\Templates\uGameForm.pas</Transaction>
+    <Transaction>2014/02/09 12:23:30.540,=C:\Users\Fabiano\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2014/02/09 12:26:52.189,D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\uMainForm.dfm=C:\Users\Fabiano\Documents\RAD Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2014/02/09 12:26:52.189,D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\uMainForm.pas=C:\Users\Fabiano\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2014/02/09 12:26:57.909,D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Snake.dproj=C:\Users\Fabiano\Documents\RAD Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2014/02/09 13:57:16.394,=D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Unit1.pas</Transaction>
+    <Transaction>2014/02/09 13:57:43.189,D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\uPlayer.pas=D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Unit1.pas</Transaction>
+    <Transaction>2014/02/09 14:06:23.708,=D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Unit1.pas</Transaction>
+    <Transaction>2014/02/09 14:06:28.600,D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\uGame.pas=D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Unit1.pas</Transaction>
+    <Transaction>2014/02/09 14:07:54.128,=D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Unit1.pas</Transaction>
+    <Transaction>2014/02/09 14:08:01.686,D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\uSnake.pas=D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Unit1.pas</Transaction>
+    <Transaction>2014/02/09 14:13:58.407,=D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Unit1.pas</Transaction>
+    <Transaction>2014/02/09 14:14:06.239,D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\uStage.pas=D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Unit1.pas</Transaction>
+    <Transaction>2014/02/09 18:53:41.226,=D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Images\heart.png</Transaction>
+    <Transaction>2014/02/09 19:11:37.758,=D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Images\bg-fase-1.jpg</Transaction>
+    <Transaction>2014/02/09 19:12:31.357,D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\uStage.pas=</Transaction>
+    <Transaction>2014/02/09 20:01:06.204,=D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Images\bgFase1.jpg</Transaction>
+    <Transaction>2014/02/09 20:07:29.532,=D:\blog\trunk\Artigos\Construindo um Jogo do Zero - Parte I\Images\bgFase1.png</Transaction>
+  </Transactions>
+</BorlandProject>
