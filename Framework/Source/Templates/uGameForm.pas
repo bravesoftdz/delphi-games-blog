@@ -175,7 +175,7 @@ begin
 end;
 
 procedure TfrmCGScreen.MainLoop;
-begin
+begin  
   StartScene;
   DrawScene;
   if fShowFPS then DrawTextFPS;
@@ -276,16 +276,15 @@ end;
 procedure TfrmCGScreen.StartScene;
 begin
   QueryPerformanceCounter(fFrameBeginTime);
+  fDeltaTime := ( (fFrameBeginTime - fFrameEndTime) * 1000) / fFrequency;
   ClearBuffer;
   fDrawingScene := True;
 end;
 
 procedure TfrmCGScreen.EndScene;
 begin
-  fDrawingScene := false;
-  fDeltaTime := ( (fFrameBeginTime - fFrameEndTime) * 1000) / fFrequency;
+  fDrawingScene := false;  
   QueryPerformanceCounter(fFrameEndTime);
-
   if ( (fFrameEndTime - fLastSecondBegining ) * 1000 / fFrequency ) > 1000 then
   begin
     fLastSecondBegining := fFrameEndTime;
@@ -297,15 +296,14 @@ end;
 procedure TfrmCGScreen.Blit;
 begin
   if not fDrawingScene then
+  begin
     BitBlt(Canvas.Handle, 0, 0, Self.Width, Self.Height, fScreenBuff.Canvas.Handle, 0, 0, cmSrcCopy);
-  inc(fFramesRendered);
+    Inc(fFramesRendered);
+  end;
 end;
 
-
 procedure TfrmCGScreen.WMEraseBg(var Msg: TWMEraseBkgnd);
-begin
-  //Bloqueia o redesenho do fundo do formulário
-  //Block's background redrawing
+begin  
   Msg.Result := 0;
 end;
 
