@@ -108,18 +108,7 @@ begin
   fOffScreen.Canvas.Font.Size  := 9;
 
   Sprite := TSprite.Create;
-  if FileExists('img01.bmp') then
-     Sprite.LoadFromFile('img01.bmp')
-  else
-  if FileExists('..\res\img01.bmp') then
-     Sprite.LoadFromFile('..\res\img01.bmp')
-  else
-    begin
-      ShowMessage('Não foi possível encontrar a imagem img01.bmp.'#13#10'O programa não pode continuar');
-      FreeFields;
-      Halt(1);
-    end;
-
+  Sprite.LoadFromResourceName(HInstance, 'IMG01');
   Sprite.Opacity := 1;
   Application.OnIdle := OnIdle;
 end;

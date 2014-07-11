@@ -1,5 +1,7 @@
 program AnimacoesIV;
 
+{$R *.dres}
+
 uses
   Forms,
   uMain in 'uMain.pas' {Form1},
