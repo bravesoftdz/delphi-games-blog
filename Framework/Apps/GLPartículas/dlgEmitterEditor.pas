@@ -7,7 +7,7 @@ uses
 
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, ExtDlgs, Spin;
+  Spin, ExtCtrls, ExtDlgs;
 
 type
   TEmitterEditor = class(TForm)
@@ -49,9 +49,9 @@ type
 
 implementation
 
-
 {$R *.dfm}
 
+uses dgTextures;
 
 { TEmitterEditor }
 
@@ -82,7 +82,6 @@ var
 begin
   if OpenPictureDialog.Execute then
   begin
-    {
     dgTextures.LoadTexture(OpenPictureDialog.FileName, textureID, false);
     fEmitter.Texture := textureID;
     if fEmitter.Texture > 0 then
@@ -91,7 +90,6 @@ begin
        imgTexture.Stretch := (imgTexture.Picture.Height > imgTexture.Height) or (imgTexture.Picture.Width > imgTexture.Width);
        imgTexture.Center := not imgTexture.Stretch;
     end;
-    }
   end;
 end;
 
