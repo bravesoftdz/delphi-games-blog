@@ -3,11 +3,7 @@ unit uGame;
 interface
 
 uses
-  uPlayer,
-
-  dgSprite, dgColor,
-
-  Graphics, PNGImage, Classes;
+  uPlayer, Graphics, PNGImage, Classes;
 
 type
   THUD = class
@@ -65,6 +61,11 @@ type
 implementation
 
 { TGame }
+
+function RGBToColor(r, g, b: byte): TColor; inline;
+begin
+  result := (r or (g shl 8) or (b shl 16));
+end;
 
 constructor TGame.Create(aScreenBuffer: TBitmap);
 begin

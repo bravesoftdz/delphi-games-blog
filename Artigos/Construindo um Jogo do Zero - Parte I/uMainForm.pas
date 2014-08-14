@@ -5,8 +5,8 @@ interface
 uses
   uGame,
 
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uGameForm;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, uGameForm, ExtCtrls, StdCtrls;
 
 type
   TfrmCGScreen1 = class(TfrmCGScreen)
@@ -30,8 +30,9 @@ implementation
 
 procedure TfrmCGScreen1.DrawScene;
 begin
-  //inherited;
+ //inherited;
  fGame.DrawFrame;
+ Caption := 'Snake dt=' + FloatToStr(DeltaTime);
 end;
 
 procedure TfrmCGScreen1.FormClose(Sender: TObject; var Action: TCloseAction);

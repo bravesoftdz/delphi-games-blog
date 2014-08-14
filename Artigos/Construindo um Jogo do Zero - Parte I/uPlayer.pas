@@ -2,10 +2,8 @@ unit uPlayer;
 
 interface
 
-uses
-  dgSprite;
-
-  type TPlayer = class
+type
+  TPlayer = class
   private
     fScore: word;
     fLives: byte;

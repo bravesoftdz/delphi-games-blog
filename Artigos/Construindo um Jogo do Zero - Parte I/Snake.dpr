@@ -3,7 +3,7 @@ program Snake;
 {$R *.dres}
 
 uses
-  Vcl.Forms,
+  Forms,
   uGameForm in '..\..\Framework\Source\Templates\uGameForm.pas' {frmCGScreen},
   uMainForm in 'uMainForm.pas' {frmCGScreen1},
   uPlayer in 'uPlayer.pas',
